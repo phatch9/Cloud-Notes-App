@@ -1,7 +1,7 @@
 # Cloud-Notes-App
 Full DevOps Pipeline that walks through the entire lifecycle of Infrastructure engineering of developing, building, and deploying a product
 
-# Cloud Notes App – Fullstack DevOps Starter (GitHub-first)
+# Fullstack DevOps Starter
 Framework:
 * Monorepo (frontend React+TS, backend Go, infra Terraform)
 * Local dev via Docker Compose (Postgres incl.)
@@ -11,7 +11,6 @@ Framework:
 ---
 
 ## Root directory structure
-
 ```
 cloud-notes/
   README.md
@@ -82,9 +81,12 @@ A production-style starter with React + Go, Postgres, Docker, GitHub Actions CI/
 2. **Local dev**
 ```bash
 docker compose up --build
-````
+```
 
 3. **Run tests**
+```
+make -C backend test
+```
 
 4. **First deploy (AWS)**
 
