@@ -69,14 +69,13 @@ cloud-notes/
 
 ---
 
-```
-# Cloud Notes App (Monorepo)
+# Cloud App (Monorepo)
 
 A production-style starter with React + Go, Postgres, Docker, GitHub Actions CI/CD, and Terraform to AWS ECS Fargate with an ALB + RDS Postgres.
 
 ## Quickstart
 
-1. ** .env 
+1. ** .env set up
    - Create `backend/.env` from the snippet in the backend section.
    - Create `frontend/.env` if needed (optional: `VITE_API_URL=http://localhost:8080`).
 
@@ -100,7 +99,6 @@ docker compose up --build
 * **backend** at [http://localhost:8080](http://localhost:8080)
 * **db** Postgres at localhost:5432 (inside compose network as `db`)
 
-````
 ---
 
 ## Bbservability & security
@@ -111,5 +109,5 @@ docker compose up --build
 * Metrics: add a `/metrics` endpoint and scrape via AWS Managed Prometheus (optional) or use CloudWatch Container Insights.
 * Autoscaling: attach ECS service autoscaling policies on CPU/Memory.
 * Migrations: add a migration tool (e.g., `golang-migrate`) and run at container start.
-```
+
 
