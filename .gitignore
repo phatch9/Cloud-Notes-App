@@ -1,0 +1,20 @@
+# Node
+node_modules/
+.dist/
+.build/
+
+# Go
+/backend/bin/
+/backend/coverage/
+
+# Env
+.env
+**/.env
+
+# Terraform
+*.tfstate*
+.terraform/
+.terraform.lock.hcl
+
+# macOS
+.DS_Store
