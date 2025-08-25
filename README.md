@@ -1,7 +1,7 @@
 # Cloud-Notes-App
 Full DevOps Pipeline that walks through the entire lifecycle of Infrastructure engineering of developing, building, and deploying a product
 
-# Fullstack DevOps Starter
+## Fullstack DevOps Starter
 Framework:
 * Monorepo (frontend React+TS, backend Go, infra Terraform)
 * Local dev via Docker Compose (Postgres incl.)
