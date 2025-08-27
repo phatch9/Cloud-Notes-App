@@ -4,7 +4,7 @@ import (
 "fmt"
 "os"
 "github.com/gofiber/fiber/v2"
-dbpkg "github.com/phatchau9/cloud-notes/backend/internal/db"
+dbpkg "github.com/phatchau9/cloud-notes-app/backend/internal/db"
 )
 
 type Server struct { app *fiber.App }
@@ -30,12 +30,10 @@ dsn := os.Getenv("DB_DSN")
 db, err := dbpkg.Open(dsn)
 if err != nil { panic(err) }
 
-
 // Routes
 RegisterRoutes(app, db)
 return s
 }
-
 
 func (s *Server) Listen(port string) error {
 return s.app.Listen(fmt.Sprintf(":%s", port))
