@@ -1,0 +1,22 @@
+ => ERROR [backend builder 7/7] RUN go build -o server ./cmd/api
+
+--Fix this error when running `docker compose build --no-cache`
+
+- the error because: go.sum is still empty inside the Docker build.
+- When Docker runs go mod download + go mod tidy, 
+- it does not yet know about the Fiber + pgx dependencies, because developer never added them locally first.
+
+Run these commands in /backend directory on host machine  (not in Docker):
+
+cd backend
+
+# Add Fiber
+go get github.com/gofiber/fiber/v2
+
+# Add pgx postgres driver
+go get github.com/jackc/pgx/v5/pgxpool
+
+# Clean up dependencies
+go mod tidy
+
+Now can see go.sum populated with lots of lines (hashes of deps)
