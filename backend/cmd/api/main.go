@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/phatch9/cloud-notes-app/backend/internal/http"
+	appHttp "github.com/phatch9/cloud-notes-app/backend/internal/http"
 )
 
 func main() {
@@ -12,9 +12,13 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	srv := http.NewServer()
-	log.Printf("starting api on :%s", port)
-	if err := srv.Listen(port); err != nil {
+
+	srv := appHttp.NewServer()
+	// function http.NewServer() must return a *fiber.App or equivalent.
+	addr := ":" + port // Fiber needs ":8080"
+	log.Printf("starting api on %s", addr)
+
+	if err := srv.Listen(addr); err != nil { // currently passing srv.Listen(port) which will fail.
 		log.Fatal(err)
 	}
 }
