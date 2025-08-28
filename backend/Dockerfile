@@ -1,25 +1,25 @@
-# Use official Go image
+# Build stage
 FROM golang:1.21 AS builder
 
 WORKDIR /app
 
-# Download dependencies
+# Copy mod files first for better caching
 COPY go.mod go.sum ./
-RUN go mod download
 
-# Copy source
+# Ensure dependencies are downloaded and tidy up
+RUN go mod download
+RUN go mod tidy
+
+# Copy the rest of the code
 COPY . .
 
-# Build binary
-RUN go build -o server ./cmd/server
+# Build the app
+RUN go build -o server ./cmd/api
 
-# Small runtime image
+# Runtime stage
 FROM debian:bullseye-slim
-
 WORKDIR /app
 COPY --from=builder /app/server .
-COPY --from=builder /app/.env .   # optional if you keep env file
 
 EXPOSE 8080
-
 CMD ["./server"]
