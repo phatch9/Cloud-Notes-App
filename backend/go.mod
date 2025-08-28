@@ -1,4 +1,4 @@
-module github.com/yourname/cloud-notes/backend
+module github.com/phatch9/cloud-notes-app/backend
 
 go 1.22
 
