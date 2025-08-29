@@ -1,56 +1,58 @@
 package auth
 
 import (
-	"errors"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/valyala/fasthttp"
 )
 
-// Claims defines the structure of the JWT payload
+var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+
 type Claims struct {
-	UserID string `json:"user_id"`
+	UserID string `json:"userId"`
 	jwt.RegisteredClaims
 }
 
-// GenerateToken creates a JWT for a given user ID
-func GenerateToken(userID string, duration time.Duration) (string, error) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		return "", errors.New("JWT_SECRET not set")
-	}
-
+// IssueToken generates a JWT for a user
+func IssueToken(userID string) (string, error) {
 	claims := &Claims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(secret))
+	return token.SignedString(jwtSecret)
 }
 
-// ValidateToken parses and validates a JWT, returning the claims if valid
-func ValidateToken(tokenStr string) (*Claims, error) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		return nil, errors.New("JWT_SECRET not set")
-	}
+// Middleware checks Authorization header for valid JWT
+func Middleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		authHeader := string(ctx.Request.Header.Peek("Authorization"))
+		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+			ctx.SetStatusCode(http.StatusUnauthorized)
+			ctx.SetBody([]byte("missing or invalid auth header"))
+			return
+		}
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 
-	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secret), nil
-	})
-	if err != nil {
-		return nil, err
-	}
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+			return jwtSecret, nil
+		})
+		if err != nil || !token.Valid {
+			ctx.SetStatusCode(http.StatusUnauthorized)
+			ctx.SetBody([]byte("invalid token"))
+			return
+		}
 
-	claims, ok := token.Claims.(*Claims)
-	if !ok || !token.Valid {
-		return nil, errors.New("invalid token")
+		// add user ID to context
+		ctx.SetUserValue("userId", claims.UserID)
+		next(ctx)
 	}
-
-	return claims, nil
 }
