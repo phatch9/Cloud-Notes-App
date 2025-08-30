@@ -19,50 +19,53 @@ func RegisterRoutes(app *fiber.App, db *pgxpool.Pool) {
 		return c.JSON(fiber.Map{"ok": true})
 	})
 
-	// Auth endpoint (demo login, always returns a token for "demo")
+	// Auth (demo: hardcoded login for now)
 	app.Post("/login", func(c *fiber.Ctx) error {
 		token, err := auth.IssueToken("demo")
 		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+			return fiber.NewError(500, err.Error())
 		}
 		return c.JSON(fiber.Map{"token": token})
 	})
 
 	api := app.Group("/api", auth.Middleware)
 
+	// List notes
 	api.Get("/notes", func(c *fiber.Ctx) error {
-		userId := c.Locals("userId").(string)
+		userId, ok := c.Locals("userId").(string)
+		if !ok || userId == "" {
+			return fiber.NewError(401, "unauthorized")
+		}
 
 		notes, err := models.ListNotes(c.Context(), db, userId)
 		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+			return fiber.NewError(500, err.Error())
 		}
 		return c.JSON(notes)
 	})
 
+	// Create note
 	api.Post("/notes", func(c *fiber.Ctx) error {
+		userId, ok := c.Locals("userId").(string)
+		if !ok || userId == "" {
+			return fiber.NewError(401, "unauthorized")
+		}
+
 		var req createNoteReq
 		if err := c.BodyParser(&req); err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, "bad json")
+			return fiber.NewError(400, "bad json")
 		}
 
-		userId := c.Locals("userId").(string)
-
-		// Call CreateNote with correct args
-		note, err := models.CreateNote(
-			c.Context(),
-			db,
-			userId,
-			req.Title,
-			req.Content,
-		)
-		if err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		n := models.Note{
+			UserID:    userId,
+			Title:     req.Title,
+			Content:   req.Content,
+			CreatedAt: time.Now(),
 		}
 
-		// Add createdAt before returning
-		note.CreatedAt = time.Now()
-
-		return c.Status(fiber.StatusCreated).JSON(note)
+		if err := models.CreateNote(c.Context(), db, &n); err != nil {
+			return fiber.NewError(500, err.Error())
+		}
+		return c.Status(201).JSON(n)
 	})
 }
