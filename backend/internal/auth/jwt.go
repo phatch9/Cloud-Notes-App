@@ -1,58 +1,46 @@
 package auth
 
 import (
-	"net/http"
-	"os"
 	"strings"
-	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/valyala/fasthttp"
 )
 
-var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+var jwtSecret = []byte("supersecret") // later: load from env
 
-type Claims struct {
-	UserID string `json:"userId"`
-	jwt.RegisteredClaims
-}
-
-// IssueToken generates a JWT for a user
-func IssueToken(userID string) (string, error) {
-	claims := &Claims{
-		UserID: userID,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			IssuedAt:  jwt.NewNumericDate(time.Now()),
-		},
+func Middleware(c *fiber.Ctx) error {
+	// Expect: Authorization: Bearer <token>
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "missing token")
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
-}
 
-// Middleware checks Authorization header for valid JWT
-func Middleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
-	return func(ctx *fasthttp.RequestCtx) {
-		authHeader := string(ctx.Request.Header.Peek("Authorization"))
-		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-			ctx.SetStatusCode(http.StatusUnauthorized)
-			ctx.SetBody([]byte("missing or invalid auth header"))
-			return
-		}
-		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-
-		claims := &Claims{}
-		token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-			return jwtSecret, nil
-		})
-		if err != nil || !token.Valid {
-			ctx.SetStatusCode(http.StatusUnauthorized)
-			ctx.SetBody([]byte("invalid token"))
-			return
-		}
-
-		// add user ID to context
-		ctx.SetUserValue("userId", claims.UserID)
-		next(ctx)
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return fiber.NewError(fiber.StatusUnauthorized, "invalid token format")
 	}
+
+	tokenStr := parts[1]
+
+	// Parse and validate JWT
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return fiber.NewError(fiber.StatusUnauthorized, "invalid token")
+	}
+
+	// Extract claims
+	claims := token.Claims.(jwt.MapClaims)
+	userID, ok := claims["sub"].(string)
+	if !ok {
+		return fiber.NewError(fiber.StatusUnauthorized, "invalid claims")
+	}
+
+	// Store userId in context
+	c.Locals("userId", userID)
+
+	// Continue request
+	return c.Next()
 }
