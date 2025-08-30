@@ -15,13 +15,15 @@ type createNoteReq struct {
 }
 
 func RegisterRoutes(app *fiber.App, db *pgxpool.Pool) {
-	app.Get("/health", func(c *fiber.Ctx) error { return c.JSON(fiber.Map{"ok": true}) })
+	app.Get("/health", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"ok": true})
+	})
 
-	// Auth (demo: hardcoded user "demo")
+	// Auth endpoint (demo login, always returns a token for "demo")
 	app.Post("/login", func(c *fiber.Ctx) error {
 		token, err := auth.IssueToken("demo")
 		if err != nil {
-			return fiber.NewError(500, err.Error())
+			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(fiber.Map{"token": token})
 	})
@@ -29,9 +31,11 @@ func RegisterRoutes(app *fiber.App, db *pgxpool.Pool) {
 	api := app.Group("/api", auth.Middleware)
 
 	api.Get("/notes", func(c *fiber.Ctx) error {
-		notes, err := models.ListNotes(c.Context(), db, "demo")
+		userId := c.Locals("userId").(string)
+
+		notes, err := models.ListNotes(c.Context(), db, userId)
 		if err != nil {
-			return fiber.NewError(500, err.Error())
+			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
 		return c.JSON(notes)
 	})
@@ -39,12 +43,26 @@ func RegisterRoutes(app *fiber.App, db *pgxpool.Pool) {
 	api.Post("/notes", func(c *fiber.Ctx) error {
 		var req createNoteReq
 		if err := c.BodyParser(&req); err != nil {
-			return fiber.NewError(400, "bad json")
+			return fiber.NewError(fiber.StatusBadRequest, "bad json")
 		}
-		n := models.Note{UserID: "demo", Title: req.Title, Content: req.Content, CreatedAt: time.Now()}
-		if err := models.CreateNote(c.Context(), db, &n); err != nil {
-			return fiber.NewError(500, err.Error())
+
+		userId := c.Locals("userId").(string)
+
+		// Call CreateNote with correct args
+		note, err := models.CreateNote(
+			c.Context(),
+			db,
+			userId,
+			req.Title,
+			req.Content,
+		)
+		if err != nil {
+			return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 		}
-		return c.Status(201).JSON(n)
+
+		// Add createdAt before returning
+		note.CreatedAt = time.Now()
+
+		return c.Status(fiber.StatusCreated).JSON(note)
 	})
 }
