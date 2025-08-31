@@ -97,13 +97,30 @@ make -C backend test
 
 ## Services
 
-* **frontend** at [http://localhost:5173](http://localhost:5173)
-* **backend** at [http://localhost:8080](http://localhost:8080)
+* **frontend** at [http://localhost:5100](http://localhost:5100)
+* **backend** at [http://localhost:8088](http://localhost:8088)
 * **db** Postgres at localhost:5432 (inside compose network as `db`)
 
 ---
+## Note:
+* Verify backend is running
+  Open your browser or run curl:
+  ```
+  curl http://localhost:1010/health
+  ```
+  (or whatever health endpoint your Go server exposes).
+  - You should see a JSON or plain text response. If getting “connection refused”, it means the backend isn’t binding correctly inside the container.
+* Re-run instruction:
+Stop existing containers:
+```
+docker compose down
+```
+Rebuild everything (to apply changes, dependencies, ports):
+```
+docker compose up --build
+```
 
-## Bbservability & security
+## Observability & security
 
 * Add HTTPS: create ACM cert + HTTPS listener; redirect 80→443.
 * Secrets: move `JWT_SECRET` & DB credentials to **AWS Secrets Manager**; map via taskDefinition `secrets`. Remove plain envs.
