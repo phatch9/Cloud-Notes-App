@@ -20,8 +20,8 @@ func CreateNote(ctx context.Context, db *pgxpool.Pool, n *Note) error {
 	err := db.QueryRow(
 		ctx,
 		`INSERT INTO notes (user_id, title, content, created_at)
-		 VALUES ($1, $2, $3, $4)
-		 RETURNING id`,
+		VALUES ($1, $2, $3, $4)
+		RETURNING id`,
 		n.UserID, n.Title, n.Content, n.CreatedAt,
 	).Scan(&n.ID)
 
