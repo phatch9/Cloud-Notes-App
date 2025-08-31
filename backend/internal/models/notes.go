@@ -33,9 +33,9 @@ func ListNotes(ctx context.Context, db *pgxpool.Pool, userID string) ([]Note, er
 	rows, err := db.Query(
 		ctx,
 		`SELECT id, user_id, title, content, created_at
-		 FROM notes
-		 WHERE user_id = $1
-		 ORDER BY created_at DESC`,
+		FROM notes
+		WHERE user_id = $1
+		ORDER BY created_at DESC`,
 		userID,
 	)
 	if err != nil {
