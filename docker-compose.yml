@@ -15,12 +15,12 @@ services:
   backend:
     build: ./backend
     environment:
-      PORT: 8080
+      PORT: 8088
       DB_DSN: postgres://notes:notes@db:5432/notes?sslmode=disable
       JWT_SECRET: devsecretchange
-      CORS_ORIGIN: http://localhost:5173
+      CORS_ORIGIN: http://localhost:5100
     ports:
-      - "1010:8080"
+      - "1010:8088"
     depends_on:
       - db
 
@@ -29,7 +29,7 @@ services:
     environment:
       VITE_API_URL: http://localhost:1010
     ports:
-      - "5100:5173"
+      - "5100:5100"
     depends_on:
       - backend
 
