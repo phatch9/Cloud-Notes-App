@@ -14,19 +14,22 @@ func main() {
 		port = "8088"
 	}
 
-	// Initialize DB connection
 	dsn := os.Getenv("DB_DSN")
+	if dsn == "" {
+		log.Fatal("DB_DSN not set")
+	}
+
+	// Initialize DB connection
 	pool, err := db.Open(dsn)
 	if err != nil {
 		log.Fatalf("db connection failed: %v", err)
 	}
 
 	srv := appHttp.NewServer(pool)
-	// function http.NewServer() must return a *fiber.App or equivalent.
-	addr := ":" + port // Fiber needs ":8088"
+	addr := ":" + port
 	log.Printf("starting api on %s", addr)
 
-	if err := srv.Listen(addr); err != nil { // currently passing srv.Listen(port) which will fail.
+	if err := srv.Listen(addr); err != nil {
 		log.Fatal(err)
 	}
 }
