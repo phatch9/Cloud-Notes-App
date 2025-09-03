@@ -15,23 +15,31 @@ services:
   backend:
     build: ./backend
     environment:
-      PORT: 8088
+      PORT: 8080
       DB_DSN: postgres://notes:notes@db:5432/notes?sslmode=disable
       JWT_SECRET: devsecretchange
       CORS_ORIGIN: http://localhost:5100
     ports:
-      - "1010:8088"
+      - "1010:8080"   # Host 1010 -> Container 8080
     depends_on:
       - db
+    networks:
+      - cloudnotes-net
 
   frontend:
     build: ./frontend
     environment:
-      VITE_API_URL: http://localhost:1010
+      VITE_API_URL: http://backend:8088   # use container name internally
     ports:
-      - "5100:5100"
+      - "5100:80"    # Host 5100 -> Nginx port 80
     depends_on:
       - backend
+    networks:
+      - cloudnotes-net
 
 volumes:
   dbdata: {}
+
+networks:
+  cloudnotes-net:
+    driver: bridge
