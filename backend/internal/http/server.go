@@ -12,6 +12,13 @@ import (
 func NewServer(db *pgxpool.Pool) *fiber.App {
 	app := fiber.New()
 
+	// Root route
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "Welcome to Cloud Notes API. Visit /healthz to check status.",
+		})
+	})
+
 	// Health check
 	app.Get("/healthz", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"status": "ok"})
