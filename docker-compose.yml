@@ -20,7 +20,7 @@ services:
       JWT_SECRET: devsecretchange
       CORS_ORIGIN: http://localhost:5100
     ports:
-      - "1010:8080"   # Host 1010 -> Container 8080
+      - "1010:8088"   # Host 1010 -> Container 8088
     depends_on:
       - db
     networks:
@@ -29,7 +29,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      VITE_API_URL: http://backend:8088   # use container name internally
+      VITE_API_URL: http://localhost:1010   # use container name internally
     ports:
       - "5100:80"    # Host 5100 -> Nginx port 80
     depends_on:
