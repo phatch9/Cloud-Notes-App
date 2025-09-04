@@ -20,3 +20,38 @@ go get github.com/jackc/pgx/v5/pgxpool
 go mod tidy
 
 Now can see go.sum populated with lots of lines (hashes of deps)
+
+
+# ERROR:
+cloud-notes-app-backend-1 | 
+2025/09/04 03:13:56 db connection failed: failed to connect to user=notes database=notes: hostname resolving error: 
+lookup db on 127.0.0.11:53: no such host
+
+Solved:
+updated docker-compose.yml
+- Ensure both backend and db are on the same Docker network
+networks:
+```
+cloudnotes-net:
+    driver: bridge
+
+services:
+  db:
+    ...
+    networks:
+      - cloudnotes-net
+
+  backend:
+    ...
+    networks:
+      - cloudnotes-net
+```
+Re-run:
+- After checking these, run:
+
+docker-compose down
+docker-compose up --build
+
+- Then check backend logs:
+
+docker logs -f cloud-notes-app-backend-1
