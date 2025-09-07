@@ -1,6 +1,6 @@
 import React from 'react';
+import type { Ticket } from '../types/ticket';
 import { Card, CardContent, Typography, Chip, Box } from '@mui/material';
-import { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
 
 const statusColors = {
   'open': '#4caf50',
