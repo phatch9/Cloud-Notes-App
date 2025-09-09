@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  InputAdornment, 
-  IconButton,
+import type { SelectChangeEvent } from '@mui/material';
+import type { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
+import {
+  Box,
+  Typography,
+  TextField,
+  InputAdornment,
   Button,
   Menu,
   MenuItem,
   FormControl,
   Select,
-  SelectChangeEvent,
   useTheme,
   useMediaQuery
 } from '@mui/material';
 import { Add, Search, FilterList, Sort } from '@mui/icons-material';
 import { TicketCard } from './TicketCard';
-import { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
 
 interface TicketListProps {
   tickets: Ticket[];
@@ -122,7 +121,7 @@ export const TicketList: React.FC<TicketListProps> = ({
           <FormControl sx={{ minWidth: 120 }}>
             <Select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as 'newest' | 'oldest' | 'priority')}
               displayEmpty
               startAdornment={
                 <InputAdornment position="start">
@@ -151,7 +150,7 @@ export const TicketList: React.FC<TicketListProps> = ({
           <FormControl fullWidth size="small" sx={{ mb: 2 }}>
             <Select
               value={statusFilter}
-              onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value as any)}
+              onChange={(e: SelectChangeEvent) => setStatusFilter(e.target.value as TicketStatus | 'all')}
               displayEmpty
             >
               <MenuItem value="all">All Statuses</MenuItem>
@@ -168,7 +167,7 @@ export const TicketList: React.FC<TicketListProps> = ({
           <FormControl fullWidth size="small">
             <Select
               value={priorityFilter}
-              onChange={(e: SelectChangeEvent) => setPriorityFilter(e.target.value as any)}
+              onChange={(e: SelectChangeEvent) => setPriorityFilter(e.target.value as TicketPriority | 'all')}
               displayEmpty
             >
               <MenuItem value="all">All Priorities</MenuItem>

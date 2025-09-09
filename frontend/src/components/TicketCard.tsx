@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Ticket } from '../types/ticket';
+import type { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
 import { Card, CardContent, Typography, Chip, Box } from '@mui/material';
 
 const statusColors = {
@@ -22,10 +22,10 @@ interface TicketCardProps {
 
 export const TicketCard: React.FC<TicketCardProps> = ({ ticket, onClick }) => {
   return (
-    <Card 
+    <Card
       onClick={onClick}
-      sx={{ 
-        mb: 2, 
+      sx={{
+        mb: 2,
         cursor: 'pointer',
         '&:hover': { boxShadow: 3 }
       }}
