@@ -3,7 +3,7 @@ Full DevOps Pipeline that walks through the entire lifecycle of Infrastructure e
 
 ## Fullstack DevOps Starter
 Framework:
-* Monorepo (frontend React+TS, backend Go, infra Terraform)
+* Monorepo (frontend React +TypeScripts, backend Go, infra Terraform)
 * Local dev via Docker Compose (Postgres incl.)
 * CI (lint/test/build) + CD (push images, apply Terraform, deploy to AWS ECS Fargate)
 * Environment management and secrets layout
@@ -97,8 +97,8 @@ make -C backend test
 
 ## Services
 
-* **frontend** at [http://localhost:5100](http://localhost:5100)
-* **backend** at [http://localhost:8088](http://localhost:8088)
+* **frontend** at [http://localhost:5100](http://localhost:5173)
+* **backend** at [http://localhost:8088](http://localhost:1010)
 * **db** Postgres at localhost:5432 (inside compose network as `db`)
 
 ---
