@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
+import type { Ticket } from '../types/ticket';
 import { Card, CardContent, Typography, Chip, Box } from '@mui/material';
 
 const statusColors = {
@@ -16,55 +16,55 @@ const priorityColors = {
 };
 
 interface TicketCardProps {
-  ticket: Ticket;
-  onClick: () => void;
+ticket: Ticket;
+onClick: () => void;
 }
 
 export const TicketCard: React.FC<TicketCardProps> = ({ ticket, onClick }) => {
-  return (
+return (
     <Card
-      onClick={onClick}
-      sx={{
-        mb: 2,
+        onClick={onClick}
+        sx={{
+            mb: 2,
         cursor: 'pointer',
         '&:hover': { boxShadow: 3 }
-      }}
+    }}
     >
-      <CardContent>
+    <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-          <Typography variant="h6" component="div">
-            {ticket.title}
-          </Typography>
-          <Chip 
-            label={ticket.status}
-            size="small"
+            <Typography variant="h6" component="div">
+                {ticket.title}
+            </Typography>
+            <Chip 
+                label={ticket.status}
+                size="small"
             sx={{ 
-              backgroundColor: `${statusColors[ticket.status]}22`,
-              color: statusColors[ticket.status],
-              fontWeight: 'bold'
+                backgroundColor: `${statusColors[ticket.status]}22`,
+                color: statusColors[ticket.status],
+                fontWeight: 'bold'
             }}
-          />
+        />
         </Box>
         
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }} noWrap>
-          {ticket.description}
+        {ticket.description}
         </Typography>
         
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Chip 
+        <Chip 
             label={`Priority: ${ticket.priority}`}
             size="small"
             variant="outlined"
             sx={{ 
-              borderColor: priorityColors[ticket.priority],
-              color: priorityColors[ticket.priority]
+            borderColor: priorityColors[ticket.priority],
+            color: priorityColors[ticket.priority]
             }}
-          />
-          <Typography variant="caption" color="text.secondary">
+        />
+        <Typography variant="caption" color="text.secondary">
             #{ticket.id.slice(0, 6)}
-          </Typography>
+        </Typography>
         </Box>
-      </CardContent>
+    </CardContent>
     </Card>
-  );
+);
 };
