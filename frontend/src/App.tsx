@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Ticket, TicketStatus, TicketPriority } from './types/ticket';
+import type { Ticket, TicketStatus, TicketPriority, User } from './types/ticket';
 import { TicketList } from './components/TicketList';
 import { TicketForm } from './components/TicketForm';
 import {
@@ -41,6 +41,13 @@ const theme = createTheme({
   },
 });
 
+// Mock users
+const mockUsers: User[] = [
+  { id: 'user1', name: 'John Doe', email: 'john@example.com', avatar: 'https://i.pravatar.cc/150?img=1' },
+  { id: 'user2', name: 'Jane Smith', email: 'jane@example.com', avatar: 'https://i.pravatar.cc/150?img=2' },
+  { id: 'user3', name: 'Mike Johnson', email: 'mike@example.com', avatar: 'https://i.pravatar.cc/150?img=3' },
+];
+
 // Data for initial state
 const mockTickets: Ticket[] = [
   {
@@ -49,11 +56,37 @@ const mockTickets: Ticket[] = [
     description: 'The login form is not properly aligned on mobile devices and needs to be fixed.',
     status: 'open' as TicketStatus,
     priority: 'high' as TicketPriority,
+    dueDate: new Date('2023-10-25T23:59:59').toISOString(),
     createdAt: new Date('2023-10-15T10:30:00').toISOString(),
     updatedAt: new Date('2023-10-15T10:30:00').toISOString(),
-    reporter: 'John Doe',
-    assignee: 'Jane Smith',
-    labels: ['frontend', 'bug'],
+    reporter: mockUsers[0],
+    assignee: mockUsers[1],
+    labels: ['frontend', 'bug', 'responsive'],
+    comments: [
+      {
+        id: 'c1',
+        content: 'I noticed this issue on iPhone 12. The form fields are overlapping.',
+        author: mockUsers[0],
+        createdAt: new Date('2023-10-15T10:30:00').toISOString(),
+        updatedAt: new Date('2023-10-15T10:30:00').toISOString(),
+      }
+    ],
+    attachments: [],
+    history: [
+      {
+        id: 'h1',
+        field: 'status',
+        oldValue: '',
+        newValue: 'open',
+        changedBy: mockUsers[0],
+        changedAt: new Date('2023-10-15T10:30:00').toISOString(),
+      }
+    ],
+    estimatedTime: 4,
+    timeSpent: 1.5,
+    storyPoints: 3,
+    relatedTickets: ['2'],
+    watchers: [mockUsers[0], mockUsers[1]],
   },
   {
     id: '2',
@@ -61,11 +94,29 @@ const mockTickets: Ticket[] = [
     description: 'Create a new page where users can view and edit their profile information.',
     status: 'in-progress' as TicketStatus,
     priority: 'medium' as TicketPriority,
+    dueDate: new Date('2023-10-30T23:59:59').toISOString(),
     createdAt: new Date('2023-10-14T14:15:00').toISOString(),
     updatedAt: new Date('2023-10-14T16:45:00').toISOString(),
-    reporter: 'Jane Smith',
-    assignee: 'Mike Johnson',
-    labels: ['frontend', 'feature'],
+    reporter: mockUsers[1],
+    assignee: mockUsers[2],
+    labels: ['frontend', 'feature', 'profile'],
+    comments: [],
+    attachments: [],
+    history: [
+      {
+        id: 'h2',
+        field: 'status',
+        oldValue: 'open',
+        newValue: 'in-progress',
+        changedBy: mockUsers[2],
+        changedAt: new Date('2023-10-14T16:45:00').toISOString(),
+      }
+    ],
+    estimatedTime: 8,
+    timeSpent: 2,
+    storyPoints: 5,
+    relatedTickets: ['1', '3'],
+    watchers: [mockUsers[1], mockUsers[2]],
   },
   {
     id: '3',
@@ -73,10 +124,27 @@ const mockTickets: Ticket[] = [
     description: 'The contact form should validate email format and required fields before submission.',
     status: 'open' as TicketStatus,
     priority: 'low' as TicketPriority,
+    dueDate: new Date('2023-11-05T23:59:59').toISOString(),
     createdAt: new Date('2023-10-13T09:20:00').toISOString(),
     updatedAt: new Date('2023-10-13T09:20:00').toISOString(),
-    reporter: 'Mike Johnson',
-    labels: ['frontend', 'validation'],
+    reporter: mockUsers[2],
+    labels: ['frontend', 'validation', 'forms'],
+    comments: [],
+    attachments: [],
+    history: [
+      {
+        id: 'h3',
+        field: 'status',
+        oldValue: '',
+        newValue: 'open',
+        changedBy: mockUsers[2],
+        changedAt: new Date('2023-10-13T09:20:00').toISOString(),
+      }
+    ],
+    estimatedTime: 3,
+    storyPoints: 2,
+    relatedTickets: ['2'],
+    watchers: [mockUsers[2]],
   },
 ];
 
