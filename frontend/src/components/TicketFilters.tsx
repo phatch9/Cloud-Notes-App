@@ -1,17 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-  type SelectChangeEvent,
-} from '@mui/material';
+import { Box, TextField, MenuItem, FormControl, InputLabel, Select, Button, IconButton, Tooltip } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import {
   FilterList as FilterIcon,
   Sort as SortIcon,
@@ -132,8 +121,8 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
 
       {showFilters && (
         <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1, mb: 2 }}>
-          <Grid container spacing={2} columns={{ xs: 12, sm: 6, md: 3 }}>
-            <Grid item xs={12} sm={6} md={3}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 11px)', lg: 'calc(25% - 12px)' } }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -151,9 +140,9 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 11px)', lg: 'calc(25% - 12px)' }, display: 'flex' }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Priority</InputLabel>
                 <Select
@@ -171,9 +160,9 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 11px)', lg: 'calc(25% - 12px)' }, display: 'flex' }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Assignee</InputLabel>
                 <Select
@@ -191,9 +180,9 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: 'calc(50% - 8px)', md: 'calc(33.333% - 11px)', lg: 'calc(25% - 12px)' }, display: 'flex' }}>
               <FormControl fullWidth size="small">
                 <InputLabel>Due Date</InputLabel>
                 <Select
@@ -211,8 +200,8 @@ export const TicketFilters: React.FC<TicketFiltersProps> = ({
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Box>
       )}
     </Box>
