@@ -69,3 +69,37 @@ export const useTicketFilters = (tickets: Ticket[], filters: FilterOptions, sort
       );
     }
 
+    // Apply sorting
+    const sortedTickets = [...filteredTickets].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sort.field) {
+        case 'createdAt':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        case 'updatedAt':
+          comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+          break;
+        case 'dueDate':
+          comparison = 
+            (a.dueDate ? new Date(a.dueDate).getTime() : Infinity) - 
+            (b.dueDate ? new Date(b.dueDate).getTime() : Infinity);
+          break;
+        case 'priority': {
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          comparison = (priorityOrder[a.priority] || 0) - (priorityOrder[b.priority] || 0);
+          break;
+        }
+        case 'status': {
+          const statusOrder = { 'open': 1, 'in-progress': 2, 'resolved': 3, 'closed': 4 };
+          comparison = (statusOrder[a.status] || 0) - (statusOrder[b.status] || 0);
+          break;
+        }
+      }
+
+      return sort.direction === 'asc' ? comparison : -comparison;
+    });
+
+    return sortedTickets;
+  }, [tickets, filters, sort]);
+};
