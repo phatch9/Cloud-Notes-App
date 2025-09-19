@@ -253,10 +253,10 @@ function App() {
 
   if (loading) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         minHeight="100vh"
       >
         <CircularProgress />
@@ -289,6 +289,7 @@ function App() {
               tickets={tickets} 
               onTicketClick={handleEditTicket}
               onCreateNew={handleCreateTicket}
+              currentUser={mockUsers[0]}
             />
           </Container>
         </Box>
@@ -301,8 +302,8 @@ function App() {
           </Container>
         </Box>
       </Box>
-      
-      <TicketForm 
+    
+      <TicketForm
         open={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleSubmitTicket}
@@ -316,8 +317,8 @@ function App() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           variant="filled"
           sx={{ width: '100%' }}
