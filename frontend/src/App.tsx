@@ -155,9 +155,9 @@ function App() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>(undefined);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({ 
-    open: false, 
-    message: '', 
-    severity: 'success' 
+    open: false,
+    message: '',
+    severity: 'success'
   });
 
   // Load tickets on initial render
@@ -285,8 +285,8 @@ function App() {
         
         <Box component="main" sx={{ flexGrow: 1, py: 3 }}>
           <Container maxWidth="lg">
-            <TicketList 
-              tickets={tickets} 
+            <TicketList
+              tickets={tickets}
               onTicketClick={handleEditTicket}
               onCreateNew={handleCreateTicket}
               currentUser={mockUsers[0]}
@@ -302,8 +302,8 @@ function App() {
           </Container>
         </Box>
       </Box>
-    
-      <TicketForm
+      
+      <TicketForm 
         open={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleSubmitTicket}
