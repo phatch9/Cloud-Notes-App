@@ -181,9 +181,9 @@ export const TicketForm: React.FC<TicketFormProps> = ({
         onSubmit: handleSubmit,
       }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
-        <Typography variant="h6">{title}</Typography>
-        <IconButton onClick={onClose} size="small">
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1, m: 0 }}>
+        <Typography component="div" variant="h6" sx={{ flexGrow: 1 }}>{title}</Typography>
+        <IconButton onClick={onClose} size="small" edge="end">
           <Close />
         </IconButton>
       </DialogTitle>
