@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Ticket, TicketStatus, TicketPriority } from '../types/ticket';
+import type { Ticket, TicketStatus, TicketPriority, User } from '../types/ticket';
 import {
   Box,
   Button,
@@ -34,12 +34,20 @@ const priorityOptions: { value: TicketPriority; label: string }[] = [
   { value: 'high', label: 'High' },
 ];
 
+// Replace this with actual user list (API or props)
+const users: User[] = [
+  { id: 'u1', name: 'Current User', email: 'current@example.com' },
+  { id: 'u2', name: 'Jane Doe', email: 'jane@example.com' },
+  { id: 'u3', name: 'John Smith', email: 'john@example.com' },
+];
+
 interface TicketFormProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (ticket: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>) => void;
   initialData?: Partial<Ticket>;
   title?: string;
+  currentUser: User; // 👈 required
 }
 
 export const TicketForm: React.FC<TicketFormProps> = ({
@@ -48,6 +56,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
   onSubmit,
   initialData,
   title = 'Create New Ticket',
+  currentUser,
 }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -57,9 +66,14 @@ export const TicketForm: React.FC<TicketFormProps> = ({
     description: '',
     status: 'open',
     priority: 'medium',
-    reporter: 'Current User',
-    assignee: '',
+    reporter: currentUser, // fixed: must be User
+    assignee: undefined,   // fixed: optional User
     labels: [],
+    comments: [],
+    attachments: [],
+    history: [],
+    relatedTickets: [],
+    watchers: [],
   });
   
   const [newLabel, setNewLabel] = useState('');
@@ -73,22 +87,32 @@ export const TicketForm: React.FC<TicketFormProps> = ({
         status: initialData.status || 'open',
         priority: initialData.priority || 'medium',
         labels: initialData.labels || [],
+        reporter: initialData.reporter || currentUser,
+        comments: initialData.comments || [],
+        attachments: initialData.attachments || [],
+        history: initialData.history || [],
+        relatedTickets: initialData.relatedTickets || [],
+        watchers: initialData.watchers || [],
       }));
     } else if (!open) {
-      // Reset form when dialog is closed
       setFormData({
         title: '',
         description: '',
         status: 'open',
         priority: 'medium',
-        reporter: 'Current User',
-        assignee: '',
+        reporter: currentUser,
+        assignee: undefined,
         labels: [],
+        comments: [],
+        attachments: [],
+        history: [],
+        relatedTickets: [],
+        watchers: [],
       });
       setNewLabel('');
       setErrors({});
     }
-  }, [open, initialData]);
+  }, [open, initialData, currentUser]);
 
   const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     const { name, value } = e.target;
@@ -99,12 +123,8 @@ export const TicketForm: React.FC<TicketFormProps> = ({
       [name]: value,
     }));
     
-    // Clear error when field is edited
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -150,10 +170,10 @@ export const TicketForm: React.FC<TicketFormProps> = ({
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      fullWidth 
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
       maxWidth="sm"
       fullScreen={fullScreen}
       PaperProps={{
@@ -161,14 +181,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
         onSubmit: handleSubmit,
       }}
     >
-      <DialogTitle 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          pb: 1,
-        }}
-      >
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pb: 1 }}>
         <Typography variant="h6">{title}</Typography>
         <IconButton onClick={onClose} size="small">
           <Close />
@@ -204,22 +217,13 @@ export const TicketForm: React.FC<TicketFormProps> = ({
         />
         
         <Box display="flex" gap={2} flexWrap="wrap">
-          <FormControl 
-            fullWidth 
-            size="small"
-            sx={{ minWidth: 120, flex: 1 }}
-          >
+          <FormControl fullWidth size="small" sx={{ minWidth: 120, flex: 1 }}>
             <InputLabel id="status-label">Status</InputLabel>
             <Select
               labelId="status-label"
               name="status"
               value={formData.status}
-              label="Status"
-              onChange={(e) => {
-                handleChange({
-                  target: { name: 'status', value: e.target.value }
-                } as React.ChangeEvent<{ name: string; value: unknown }>);
-              }}
+              onChange={handleChange}
             >
               {statusOptions.map(option => (
                 <MenuItem key={option.value} value={option.value}>
@@ -229,22 +233,13 @@ export const TicketForm: React.FC<TicketFormProps> = ({
             </Select>
           </FormControl>
           
-          <FormControl 
-            fullWidth 
-            size="small"
-            sx={{ minWidth: 120, flex: 1 }}
-          >
+          <FormControl fullWidth size="small" sx={{ minWidth: 120, flex: 1 }}>
             <InputLabel id="priority-label">Priority</InputLabel>
             <Select
               labelId="priority-label"
               name="priority"
               value={formData.priority}
-              label="Priority"
-              onChange={(e) => {
-                handleChange({
-                  target: { name: 'priority', value: e.target.value }
-                } as React.ChangeEvent<{ name: string; value: unknown }>);
-              }}
+              onChange={handleChange}
             >
               {priorityOptions.map(option => (
                 <MenuItem key={option.value} value={option.value}>
@@ -255,21 +250,30 @@ export const TicketForm: React.FC<TicketFormProps> = ({
           </FormControl>
         </Box>
         
-        <TextField
-          fullWidth
-          label="Assignee"
-          name="assignee"
-          value={formData.assignee || ''}
-          onChange={handleChange}
-          placeholder="Unassigned"
-        />
+        {/* Assignee select */}
+        <FormControl fullWidth size="small">
+          <InputLabel id="assignee-label">Assignee</InputLabel>
+          <Select
+            labelId="assignee-label"
+            name="assignee"
+            value={formData.assignee?.id || ''}
+            onChange={(e) => {
+              const user = users.find(u => u.id === e.target.value);
+              setFormData(prev => ({ ...prev, assignee: user }));
+            }}
+          >
+            <MenuItem value="">Unassigned</MenuItem>
+            {users.map(u => (
+              <MenuItem key={u.id} value={u.id}>{u.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         
+        {/* Labels */}
         <Box>
           <Box display="flex" alignItems="center" gap={1} mb={1}>
             <Label color="action" fontSize="small" />
-            <Typography variant="body2" color="textSecondary">
-              Labels
-            </Typography>
+            <Typography variant="body2" color="textSecondary">Labels</Typography>
           </Box>
           
           <Box display="flex" gap={1} flexWrap="wrap" mb={1}>
@@ -313,11 +317,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
       
       <DialogActions sx={{ px: 3, py: 2 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button 
-          type="submit" 
-          variant="contained" 
-          color="primary"
-        >
+        <Button type="submit" variant="contained" color="primary">
           {initialData?.id ? 'Update' : 'Create'}
         </Button>
       </DialogActions>
