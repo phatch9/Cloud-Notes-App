@@ -309,6 +309,7 @@ function App() {
         onSubmit={handleSubmitTicket}
         initialData={selectedTicket}
         title={selectedTicket ? 'Edit Ticket' : 'Create New Ticket'}
+        currentUser={mockUsers[0]}
       />
       
       <Snackbar
