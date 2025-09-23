@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  type SelectChangeEvent,
   MenuItem,
   useTheme,
   useMediaQuery,
@@ -114,8 +115,23 @@ export const TicketForm: React.FC<TicketFormProps> = ({
     }
   }, [open, initialData, currentUser]);
 
-  const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    if (!name) return;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
+    
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+  
+  // Handler for Select components
+  const handleSelectChange = (e: SelectChangeEvent<unknown>) => {
+    const { name, value } = e.target as { name: string; value: string };
     if (!name) return;
     
     setFormData(prev => ({
@@ -223,7 +239,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
               labelId="status-label"
               name="status"
               value={formData.status}
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               {statusOptions.map(option => (
                 <MenuItem key={option.value} value={option.value}>
@@ -239,7 +255,7 @@ export const TicketForm: React.FC<TicketFormProps> = ({
               labelId="priority-label"
               name="priority"
               value={formData.priority}
-              onChange={handleChange}
+              onChange={handleSelectChange}
             >
               {priorityOptions.map(option => (
                 <MenuItem key={option.value} value={option.value}>
