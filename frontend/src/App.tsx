@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { AuthProvider } from './contexts';
-import { useAuth } from './hooks/useAuth';
+import { AuthProvider, useAuth } from './contexts';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -32,11 +31,6 @@ const theme = createTheme({
       default: '#f5f5f5',
       paper: '#ffffff',
     },
-    text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
-      secondary: 'rgba(0, 0, 0, 0.6)',
-      disabled: 'rgba(0, 0, 0, 0.38)',
-    },
   },
   typography: {
     fontFamily: [
@@ -51,65 +45,22 @@ const theme = createTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(','),
-    h1: {
-      fontWeight: 700,
-      fontSize: '2.5rem',
-      lineHeight: 1.2,
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2rem',
-      lineHeight: 1.3,
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: '1.75rem',
-      lineHeight: 1.3,
-    },
-    h4: {
-      fontWeight: 600,
-      fontSize: '1.5rem',
-      lineHeight: 1.3,
-    },
-    h5: {
-      fontWeight: 600,
-      fontSize: '1.25rem',
-      lineHeight: 1.3,
-    },
-    h6: {
-      fontWeight: 600,
-      fontSize: '1.1rem',
-      lineHeight: 1.3,
-    },
+  },
+  shape: {
+    borderRadius: 8,
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          borderRadius: 8,
-          padding: '8px 16px',
-          fontWeight: 500,
-          boxShadow: 'none',
-          '&:hover': {
-            boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
-          },
-        },
-        contained: {
-          '&:hover': {
-            boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
-          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-          '&:hover': {
-            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-          },
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
         },
       },
     },
@@ -158,9 +109,9 @@ const AppRoutes = () => {
           <PublicRoute>
             <RegisterPage />
           </PublicRoute>
-        } 
+        }
       />
-      
+
       {/* Protected routes */}
       <Route
         path="/dashboard"
@@ -172,7 +123,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      
+
       {/* Catch all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
