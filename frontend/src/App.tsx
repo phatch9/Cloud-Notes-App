@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { AuthProvider } from './contexts';
+import { useAuth } from './hooks/useAuth';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -125,13 +125,12 @@ const theme = createTheme({
   },
 });
 
-// Custom route component to handle public routes
 const PublicRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
   if (isAuthenticated) {
-    // Redirect to dashboard if user is already authenticated
+    // If user is authenticated, redirect to dashboard
     return <Navigate to="/dashboard" state={{ from: location }} replace />;
   }
 
