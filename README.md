@@ -99,12 +99,12 @@ make -C backend test
 
 * **frontend** at [http://localhost:5100](http://localhost:5173)
 * **backend** at [http://localhost:8088](http://localhost:1010)
-* **db** Postgres at localhost:5432 (inside compose network as `db`)
+* **db** Postgres at [localhost:5432] (inside compose network as `db`)
 
 ---
 ## Note:
-* Verify backend is running
-  Open your browser or run curl:
+* Verify backend is running:
+  - Open your browser or run curl:
   ```
   curl http://localhost:1010/health
   ```
