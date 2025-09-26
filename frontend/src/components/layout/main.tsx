@@ -133,9 +133,9 @@ export default function MainLayout() {
                 aria-controls="account-menu"
                 aria-haspopup="true"
               >
-                <Avatar 
-                  alt={user?.name || 'User'} 
-                  src={user?.avatar} 
+                <Avatar
+                  alt={user?.name || 'User'}
+                  src={user?.avatar}
                   sx={{ width: 32, height: 32 }}
                 >
                   {user?.name?.charAt(0) || 'U'}
@@ -181,8 +181,8 @@ export default function MainLayout() {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            '& .MuiDrawer-paper': { 
-              boxSizing: 'border-box', 
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
               bgcolor: 'background.paper',
               borderRight: '1px solid',
