@@ -1,3 +1,4 @@
+import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts';
@@ -76,7 +77,11 @@ const theme = createTheme({
   },
 });
 
-const PublicRoute = ({ children }: { children: JSX.Element }) => {
+interface PublicRouteProps {
+  children: React.ReactNode;
+}
+
+const PublicRoute = ({ children }: PublicRouteProps) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
 
@@ -135,7 +140,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <AppRoutes />
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <h1>Cloud Notes App</h1>
+          <p>If you see this, React is working!</p>
+          <AppRoutes />
+        </div>
       </AuthProvider>
     </ThemeProvider>
   );
