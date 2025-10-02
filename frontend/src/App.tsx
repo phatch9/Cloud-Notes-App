@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts';
 
@@ -139,13 +139,16 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <h1>Cloud Notes App</h1>
-          <p>If you see this, React is working!</p>
-          <AppRoutes />
-        </div>
-      </AuthProvider>
+      {/* BrowserRouter here to provide routing context 🌟 */}
+      <BrowserRouter>
+        <AuthProvider>
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h1>Cloud Notes App</h1>
+            <p>Manage Your Tasks All At Once</p>
+            <AppRoutes />
+          </div>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
