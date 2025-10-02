@@ -103,13 +103,25 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
         sx={{
           width: { sm: `calc(100% - ${open ? drawerWidth : 0}px)` },
-          ml: { sm: `${drawerWidth}px` },
+          ml: { sm: `${open ? drawerWidth : 0}px` },
+          transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+          ...(open && !isMobile && {
+            marginLeft: `${drawerWidth}px`,
+            width: `calc(100% - ${drawerWidth}px)`,
+            transition: theme.transitions.create(['width', 'margin'], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          }),
         }}
       >
         <Toolbar>
@@ -122,7 +134,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Cloud Notes
           </Typography>
         </Toolbar>

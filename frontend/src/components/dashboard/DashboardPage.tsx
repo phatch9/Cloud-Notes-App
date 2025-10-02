@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  Card, 
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
   CardHeader,
   Avatar,
   IconButton,
