@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Ticket, TicketStatus, TicketPriority, User } from '../types/ticket';
+import type { Ticket, TicketStatus, TicketPriority, User } from '../../types/ticket';
 import {
   Box,
   Button,

@@ -4,10 +4,10 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts';
 
 // Pages
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import HomePage from './components/pages/HomePage';
+import LoginPage from './components/auth/LoginPage';
+import RegisterPage from './components/auth/RegisterPage';
+import DashboardPage from './components/dashboard/DashboardPage';
 
 // Components
 import ProtectedRoute from './components/auth/ProtectedRoute';
