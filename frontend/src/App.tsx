@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Box } from '@mui/material';
 import { AuthProvider, useAuth } from './contexts';
 
 // Pages
@@ -97,7 +97,11 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <HomePage />
+        </Box>
+      } />
       
       {/* Public routes */}
       <Route
@@ -139,14 +143,11 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/* BrowserRouter here to provide routing context 🌟 */}
       <BrowserRouter>
         <AuthProvider>
-          <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h1>Cloud Notes App</h1>
-            <p>Manage Your Tasks All At Once</p>
+          <MainLayout>
             <AppRoutes />
-          </div>
+          </MainLayout>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
