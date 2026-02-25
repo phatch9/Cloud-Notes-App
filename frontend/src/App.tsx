@@ -143,11 +143,14 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      {/* BrowserRouter here to provide routing context 🌟 */}
       <BrowserRouter>
         <AuthProvider>
-          <MainLayout>
+          <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h1>Cloud Notes App</h1>
+            <p>Manage Your Tasks All At Once</p>
             <AppRoutes />
-          </MainLayout>
+          </div>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
