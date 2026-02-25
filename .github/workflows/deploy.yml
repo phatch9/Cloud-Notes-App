@@ -1,63 +1,59 @@
 name: Deploy
 on:
-push:
-branches: [ main ]
-
+  push:
+    branches: [ main ]
 
 env:
-AWS_REGION: us-east-1
-TF_WORKING_DIR: infra/terraform
-
+  AWS_REGION: us-east-1
+  TF_WORKING_DIR: infra/terraform
 
 permissions:
-id-token: write
-contents: read
-
+  id-token: write
+  contents: read
 
 jobs:
-build_and_push:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
 
+    - name: Configure AWS creds
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_GHA_ROLE_ARN }}
+        aws-region: ${{ env.AWS_REGION }}
 
-- name: Configure AWS creds
-uses: aws-actions/configure-aws-credentials@v4
-with:
-role-to-assume: ${{ secrets.AWS_GHA_ROLE_ARN }}
-aws-region: ${{ env.AWS_REGION }}
+    - name: Login to ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
+    - name: Build & push backend image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/cloud-notes-backend:$IMAGE_TAG backend
+        docker tag $ECR_REGISTRY/cloud-notes-backend:$IMAGE_TAG $ECR_REGISTRY/cloud-notes-backend:latest
+        docker push $ECR_REGISTRY/cloud-notes-backend:$IMAGE_TAG
+        docker push $ECR_REGISTRY/cloud-notes-backend:latest
 
-- name: Login to ECR
-id: login-ecr
-uses: aws-actions/amazon-ecr-login@v2
+    - name: Build & push frontend image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build -t $ECR_REGISTRY/cloud-notes-frontend:$IMAGE_TAG frontend
+        docker tag $ECR_REGISTRY/cloud-notes-frontend:$IMAGE_TAG $ECR_REGISTRY/cloud-notes-frontend:latest
+        docker push $ECR_REGISTRY/cloud-notes-frontend:$IMAGE_TAG
+        docker push $ECR_REGISTRY/cloud-notes-frontend:latest
 
-
-- name: Build & push backend image
-env:
-ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-IMAGE_TAG: ${{ github.sha }}
-run: |
-docker build -t $ECR_REGISTRY/cloud-notes-backend:$IMAGE_TAG backend
-docker push $ECR_REGISTRY/cloud-notes-backend:$IMAGE_TAG
-
-
-- name: Build & push frontend image
-env:
-ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-IMAGE_TAG: ${{ github.sha }}
-run: |
-docker build -t $ECR_REGISTRY/cloud-notes-frontend:$IMAGE_TAG frontend
-docker push $ECR_REGISTRY/cloud-notes-frontend:$IMAGE_TAG
-
-
-- name: Terraform apply
-working-directory: ${{ env.TF_WORKING_DIR }}
-env:
-TF_VAR_backend_image_tag: ${{ github.sha }}
-TF_VAR_frontend_image_tag: ${{ github.sha }}
-run: |
-terraform init -input=false
-terraform apply -auto-approve -input=false \
--var=backend_image_tag=${{ github.sha }} \
--var=frontend_image_tag=${{ github.sha }}
+    - name: Terraform apply
+      working-directory: ${{ env.TF_WORKING_DIR }}
+      env:
+        TF_VAR_backend_image_tag: ${{ github.sha }}
+        TF_VAR_frontend_image_tag: ${{ github.sha }}
+      run: |
+        terraform init -input=false
+        terraform apply -auto-approve -input=false \
+          -var="backend_image_tag=${{ github.sha }}" \
+          -var="frontend_image_tag=${{ github.sha }}"
