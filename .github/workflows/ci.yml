@@ -1,37 +1,61 @@
 name: CI
 on:
-pull_request:
-push:
-branches: [ main ]
-
+  pull_request:
+  push:
+    branches: [ main ]
 
 jobs:
-backend:
-runs-on: ubuntu-latest
-defaults:
-run:
-working-directory: backend
-steps:
-- uses: actions/checkout@v4
-- uses: actions/setup-go@v5
-with:
-go-version: '1.22'
-- run: go mod download
-- run: go vet ./...
-- run: go test ./... -coverprofile=coverage.out
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+        cache-dependency-path: backend/go.sum
+        
+    - run: go mod download
+    
+    - name: Run Go Vet
+      run: go vet ./...
+      
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v6
+      with:
+        version: v1.56
+        working-directory: backend
+        
+    - name: Run Tests
+      run: go test ./... -coverprofile=coverage.out
+      
+    - name: Docker Build (Dry Run)
+      run: docker build -t cloud-notes-backend:test .
 
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - run: npm ci
+    
+    - name: Run Linter
+      run: npm run lint || true # Avoid failing if lint script is missing during initial setup
 
-frontend:
-runs-on: ubuntu-latest
-defaults:
-run:
-working-directory: frontend
-steps:
-- uses: actions/checkout@v4
-- uses: actions/setup-node@v4
-with:
-node-version: '20'
-cache: 'npm'
-cache-dependency-path: frontend/package-lock.json
-- run: npm ci
-- run: npm run build
+    - name: Build Frontend
+      run: npm run build
+      
+    - name: Docker Build (Dry Run)
+      run: docker build -t cloud-notes-frontend:test .
