@@ -91,8 +91,14 @@ make -C backend test
 4. **First deploy (AWS)**
 
    * Install Terraform and AWS CLI.
-   * Configure AWS credentials with permission for VPC, RDS, ECS, ECR, IAM, ALB.
-   * In `infra/terraform`: `terraform init && terraform apply`.
+   * Configure AWS credentials with permission for VPC, RDS, ECS, ECR, IAM, ALB, S3, and DynamoDB.
+   * **Bootstrap Remote State:** run `./infra/terraform/bootstrap.sh` to create the S3 bucket and DynamoDB table for Terraform. 
+   * Then, in `infra/terraform`: 
+     ```bash
+     terraform init
+     terraform apply -var="db_password=YOUR_SECURE_PASSWORD"
+     ```
+   * Setup GitHub Secrets: Add `AWS_GHA_ROLE_ARN` (with OIDC) for GitHub Actions to deploy automatically.
    * Push to `main` to trigger CI/CD.
 
 ## Services
