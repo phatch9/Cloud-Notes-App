@@ -23,12 +23,14 @@
     "react-router-dom": "^6.30.1"
   },
   "devDependencies": {
-    "@eslint/js": "^8.56.0",
+    "@eslint/js": "^9.39.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
+    "eslint": "^9.39.3",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "jiti": "^2.6.1",
     "typescript": "~5.3.3",
+    "typescript-eslint": "^8.56.1",
     "vite": "^5.0.12"
   }
 }
