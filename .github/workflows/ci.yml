@@ -52,7 +52,7 @@ jobs:
     - run: npm ci
     
     - name: Run Linter
-      run: npm run lint || true # Avoid failing if lint script is missing during initial setup
+      run: npm run lint
 
     - name: Build Frontend
       run: npm run build
